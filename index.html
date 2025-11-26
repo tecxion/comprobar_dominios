@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comprobador de Disponibilidad de Dominios - TecX</title>
+    <link rel="stylesheet" href="styles/style.css" type="text/css" />
+</head>
+
+<body>
+
+    <header>
+        TecX - Comprobador de Dominios
+    </header>
+
+    <main>
+        <h1>Comprobador de Disponibilidad de Dominios</h1>
+        <label for="domainInput">Ingresa el nombre del dominio (sin extensión):</label>
+        <input type="text" id="domainInput" placeholder="ejemplo" autocomplete="off" />
+
+        <div class="extensiones">
+            <!-- Varias extensiones disponibles para consulta -->
+            <label><input type="checkbox" value=".com" checked /> .com</label>
+            <label><input type="checkbox" value=".es" checked /> .es</label>
+            <label><input type="checkbox" value=".net" checked /> .net</label>
+            <label><input type="checkbox" value=".org" checked /> .org</label>
+            <label><input type="checkbox" value=".info" /> .info</label>
+            <label><input type="checkbox" value=".biz" /> .biz</label>
+            <label><input type="checkbox" value=".online" /> .online</label>
+            <label><input type="checkbox" value=".tech" /> .tech</label>
+            <label><input type="checkbox" value=".store" /> .store</label>
+            <label><input type="checkbox" value=".website" /> .website</label>
+            <label><input type="checkbox" value=".club" /> .club</label>
+            <label><input type="checkbox" value=".co" /> .co</label>
+            <label><input type="checkbox" value=".io" /> .io</label>
+            <label><input type="checkbox" value=".me" /> .me</label>
+            <label><input type="checkbox" value=".app" /> .app</label>
+            <label><input type="checkbox" value=".dev" /> .dev</label>
+        </div>
+
+        <button id="checkBtn">Comprobar Disponibilidad</button>
+
+        <div class="results" id="results"></div>
+    </main>
+
+    <footer>
+        Created by TcX 2025 Copyright
+    </footer>
+
+    <script>
+        // Función para consultar DNS A record con API pública de Google DNS
+        async function checkDomain(domain) {
+            try {
+                const response = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
+                const data = await response.json();
+                // Si answer existe significa dominio no disponible (tiene IP)
+                if (data && data.Answer && data.Answer.length > 0) {
+                    return false; // No disponible
+                } else {
+                    return true; // Disponible
+                }
+            } catch (e) {
+                console.error('Error en consulta DNS:', e);
+                return null; // Error o no pudo determinar
+            }
+        }
+
+        document.getElementById('checkBtn').addEventListener('click', async () => {
+            const domainInput = document.getElementById('domainInput').value.trim();
+            const selectedExts = Array.from(document.querySelectorAll('.extensiones input[type=checkbox]:checked'))
+                .map(chk => chk.value);
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (!domainInput) {
+                resultsDiv.innerHTML = '<p style="color:#f44336;">Por favor, ingresa un nombre de dominio válido.</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<p>Comprobando...</p>';
+
+            for (let ext of selectedExts) {
+                resultsDiv.innerHTML += `<p>Comprobando ${domainInput}${ext}...</p>`;
+            }
+
+            resultsDiv.innerHTML = '';
+
+            for (let ext of selectedExts) {
+                const fullDomain = domainInput + ext;
+                resultsDiv.innerHTML += `<div class="result-item">${fullDomain}: <span class="checking">Chequeando...</span></div>`;
+            }
+
+            const items = document.querySelectorAll('.result-item');
+            for (let i = 0; i < selectedExts.length; i++) {
+                const fullDomain = domainInput + selectedExts[i];
+                const available = await checkDomain(fullDomain);
+                const span = items[i].querySelector('span');
+                if (available === true) {
+                    span.textContent = 'Disponible';
+                    span.className = 'available';
+                } else if (available === false) {
+                    span.textContent = 'No disponible';
+                    span.className = 'unavailable';
+                } else {
+                    span.textContent = 'Error al verificar';
+                    span.className = 'unavailable';
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
