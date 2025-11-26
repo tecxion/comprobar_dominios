@@ -9,7 +9,8 @@ Esta herramienta permite a los usuarios **verificar rápidamente si un nombre de
 
 ![GitHub forks](https://img.shields.io/github/forks/tecxion/comprobar_dominios) ![GitHub Repo stars](https://img.shields.io/github/stars/tecxion/comprobar_dominios)
 
-![GitHub language count](https://img.shields.io/github/languages/count/tecxion/comprobar_dominios) ![GitHub top language](https://img.shields.io/github/languages/top/tecxion/comprobar_dominios)
+![GitHub language count](https://img.shields.io/github/languages/count/tecxion/comprobar_dominios) ![GitHub top language](https://img.shields.io/github/languages/top/tecxion/comprobar_dominios) ![Static Badge](https://img.shields.io/badge/html-css-green?style=flat-square&logo=html5&logoColor=white)
+
 
 
 
